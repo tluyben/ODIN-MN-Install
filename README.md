@@ -116,7 +116,5 @@ You can use the installer in a non-interactive mode by using command line argume
 --no-fail2ban             : Don't install Fail2Ban
 -u --ufw                  : Install UFW
 --no-ufw                  : Don't install UFW
--b --bootstrap            : Sync node using Bootstrap
---no-bootstrap            : Don't use Bootstrap
 -h --help                 : Display this help text.
 ```
