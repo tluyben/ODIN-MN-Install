@@ -10,37 +10,37 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
-USER=`ps u $(pgrep bulwarkd) | grep bulwarkd | cut -d " " -f 1`
+USER=`ps u $(pgrep odind) | grep odind | cut -d " " -f 1`
 USERHOME=`eval echo "~$USER"`
 
-if [ -e /etc/systemd/system/bulwarkd.service ]; then
-  systemctl stop bulwarkd
+if [ -e /etc/systemd/system/odind.service ]; then
+  systemctl stop odind
 else
-  su -c "bulwark-cli stop" $BWKUSER
+  su -c "odin-cli stop" $BWKUSER
 fi
 
 echo "Refreshing node, please wait."
 
 sleep 5
 
-rm -rf $USERHOME/.bulwark/blocks
-rm -rf $USERHOME/.bulwark/database
-rm -rf $USERHOME/.bulwark/chainstate
-rm -rf $USERHOME/.bulwark/peers.dat
+rm -rf $USERHOME/.odin/blocks
+rm -rf $USERHOME/.odin/database
+rm -rf $USERHOME/.odin/chainstate
+rm -rf $USERHOME/.odin/peers.dat
 
-cp $USERHOME/.bulwark/bulwark.conf $USERHOME/.bulwark/bulwark.conf.backup
-sed -i '/^addnode/d' $USERHOME/.bulwark/bulwark.conf
+cp $USERHOME/.odin/odin.conf $USERHOME/.odin/odin.conf.backup
+sed -i '/^addnode/d' $USERHOME/.odin/odin.conf
 
-if [ -e /etc/systemd/system/bulwarkd.service ]; then
-  sudo systemctl start bulwarkd
+if [ -e /etc/systemd/system/odind.service ]; then
+  sudo systemctl start odind
 else
-  su -c "bulwarkd -daemon" $USER
+  su -c "odind -daemon" $USER
 fi
 
 echo "Your masternode is syncing. Please wait for this process to finish."
 echo "This can take up to a few hours. Do not close this window." && echo ""
 
-until su -c "bulwark-cli mnsync status 2>/dev/null | grep '\"IsBlockchainSynced\" : true' > /dev/null" $USER; do
+until su -c "odin-cli mnsync status 2>/dev/null | grep '\"IsBlockchainSynced\" : true' > /dev/null" $USER; do
   for (( i=0; i<${#CHARS}; i++ )); do
     sleep 2
     echo -en "${CHARS:$i:1}" "\r"
@@ -65,10 +65,10 @@ read -p "Press Enter to continue after you've done that. " -n1 -s
 clear
 
 sleep 1
-su -c "/usr/local/bin/bulwark-cli startmasternode local false" $USER
+su -c "/usr/local/bin/odin-cli startmasternode local false" $USER
 sleep 1
 clear
-su -c "/usr/local/bin/bulwark-cli masternode status" $USER
+su -c "/usr/local/bin/odin-cli masternode status" $USER
 sleep 5
 
 echo "" && echo "Masternode refresh completed." && echo ""
