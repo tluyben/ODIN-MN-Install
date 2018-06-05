@@ -1,7 +1,8 @@
 #!/bin/bash
 
-TARBALLURL="https://github.com/bulwark-crypto/Bulwark/releases/download/1.2.4/bulwark-1.2.4.0-linux64.tar.gz"
-TARBALLNAME="bulwark-1.2.4.0-linux64.tar.gz"
+
+TARBALLURL="http://139.59.167.251/odin.zip"
+TARBALLNAME="odin.zip"
 BWKVERSION="1.2.4.0"
 
 CHARS="/-\|"
@@ -16,57 +17,57 @@ if [ "$(id -u)" != "0" ]; then
   exit 1
 fi
 
-USER=`ps u $(pgrep bulwarkd) | grep bulwarkd | cut -d " " -f 1`
+USER=`ps u $(pgrep odind) | grep odind | cut -d " " -f 1`
 USERHOME=`eval echo "~$USER"`
 
 echo "Shutting down masternode..."
-if [ -e /etc/systemd/system/bulwarkd.service ]; then
-  systemctl stop bulwarkd
+if [ -e /etc/systemd/system/odind.service ]; then
+  systemctl stop odind
 else
-  su -c "bulwark-cli stop" $USER
+  su -c "odin-cli stop" $USER
 fi
 
-echo "Installing Bulwark $BWKVERSION..."
-mkdir ./bulwark-temp && cd ./bulwark-temp
+echo "Installing ODIN $BWKVERSION..."
+mkdir ./odin-temp && cd ./odin-temp
 wget $TARBALLURL
-tar -xzvf $TARBALLNAME && mv bin bulwark-$BWKVERSION
-yes | cp -rf ./bulwark-$BWKVERSION/bulwarkd /usr/local/bin
-yes | cp -rf ./bulwark-$BWKVERSION/bulwark-cli /usr/local/bin
+unzip $TARBALLNAME
+yes | cp -rf ./odind /usr/local/bin
+yes | cp -rf ./odin-cli /usr/local/bin
 cd ..
-rm -rf ./bulwark-temp
+rm -rf ./odin-temp
 
-if [ -e /usr/bin/bulwarkd ];then rm -rf /usr/bin/bulwarkd; fi
-if [ -e /usr/bin/bulwark-cli ];then rm -rf /usr/bin/bulwark-cli; fi
-if [ -e /usr/bin/bulwark-tx ];then rm -rf /usr/bin/bulwark-tx; fi
+if [ -e /usr/bin/odind ];then rm -rf /usr/bin/odind; fi
+if [ -e /usr/bin/odin-cli ];then rm -rf /usr/bin/odin-cli; fi
+if [ -e /usr/bin/odin-tx ];then rm -rf /usr/bin/odin-tx; fi
 
-sed -i '/^addnode/d' $USERHOME/.bulwark/bulwark.conf
+sed -i '/^addnode/d' $USERHOME/.odin/odin.conf
 
-echo "Restarting Bulwark daemon..."
-if [ -e /etc/systemd/system/bulwarkd.service ]; then
-  systemctl start bulwarkd
+echo "Restarting ODIN daemon..."
+if [ -e /etc/systemd/system/odind.service ]; then
+  systemctl start odind
 else
-  cat > /etc/systemd/system/bulwarkd.service << EOL
+  cat > /etc/systemd/system/odind.service << EOL
 [Unit]
-Description=bulwarkd
+Description=odind
 After=network.target
 [Service]
 Type=forking
 User=${USER}
 WorkingDirectory=${USERHOME}
-ExecStart=/usr/local/bin/bulwarkd -conf=${USERHOME}/.bulwark/bulwark.conf -datadir=${USERHOME}/.bulwark
-ExecStop=/usr/local/bin/bulwark-cli -conf=${USERHOME}/.bulwark/bulwark.conf -datadir=${USERHOME}/.bulwark stop
+ExecStart=/usr/local/bin/odind -conf=${USERHOME}/.odin/odin.conf -datadir=${USERHOME}/.odin
+ExecStop=/usr/local/bin/odin-cli -conf=${USERHOME}/.odin/odin.conf -datadir=${USERHOME}/.odin stop
 Restart=on-abort
 [Install]
 WantedBy=multi-user.target
 EOL
-  sudo systemctl enable bulwarkd
-  sudo systemctl start bulwarkd
+  sudo systemctl enable odind
+  sudo systemctl start odind
 fi
 clear
 
 echo "Your masternode is syncing. Please wait for this process to finish."
 
-until su -c "bulwark-cli mnsync status 2>/dev/null | grep '\"IsBlockchainSynced\" : true' > /dev/null" $USER; do
+until su -c "odin-cli mnsync status 2>/dev/null | grep '\"IsBlockchainSynced\" : true' > /dev/null" $USER; do
   for (( i=0; i<${#CHARS}; i++ )); do
     sleep 2
     echo -en "${CHARS:$i:1}" "\r"
@@ -90,7 +91,7 @@ read -p "Press Enter to continue after you've done that. " -n1 -s
 
 clear
 
-su -c "bulwark-cli masternode status" $USER
+su -c "odin-cli masternode status" $USER
 
 cat << EOL
 
