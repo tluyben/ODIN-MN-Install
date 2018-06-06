@@ -242,11 +242,6 @@ rm odin*
 # Create .odin directory
 mkdir $USERHOME/.odin
 
-# Install bootstrap file NOT SUPPORTED YET
-if [[ ("$BOOTSTRAP" == "y" || "$BOOTSTRAP" == "Y" || "$BOOTSTRAP" == "") ]]; then
-#  echo "Installing bootstrap file..."
-#  wget $BOOTSTRAPURL && unzip $BOOTSTRAPARCHIVE -d $USERHOME/.bulwark/ && rm $BOOTSTRAPARCHIVE
-fi
 
 # Create bulwark.conf
 touch $USERHOME/.odin/odin.conf
