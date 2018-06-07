@@ -267,7 +267,7 @@ chown -R $USER:$USER $USERHOME/.odin
 
 sleep 1
 
-cat > /etc/systemd/system/odin.service << EOL
+cat > /etc/systemd/system/odind.service << EOL
 [Unit]
 Description=odind
 After=network.target
