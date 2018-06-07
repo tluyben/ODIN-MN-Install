@@ -31,6 +31,7 @@ echo "Installing ODIN $BWKVERSION..."
 mkdir ./odin-temp && cd ./odin-temp
 wget $TARBALLURL
 unzip $TARBALLNAME
+chmod 755 odin*
 yes | cp -rf ./odind /usr/local/bin
 yes | cp -rf ./odin-cli /usr/local/bin
 cd ..

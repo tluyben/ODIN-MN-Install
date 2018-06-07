@@ -234,6 +234,7 @@ fi
 # Install ODIN daemon
 wget $TARBALLURL
 unzip $TARBALLNAME 
+chmod 755 odin*
 cp ./odind /usr/local/bin
 cp ./odin-cli /usr/local/bin
 cp ./odin-tx /usr/local/bin
